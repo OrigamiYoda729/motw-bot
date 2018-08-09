@@ -1,1 +1,1 @@
-worker: node.js app.js
+worker: node app.js
