@@ -1,4 +1,3 @@
-const botconfig = require("./botconfig.json");
 const Discord = require("discord.js");
 const fs = require("fs");
 const bot = new Discord.Client({disableEveryone: true});
@@ -28,7 +27,7 @@ bot.on("message", async message => {
       }, 30000);
   }
 
-  let prefix = botconfig.prefix;
+  let prefix = "/";
   let messageArray = message.content.split(" ");
   let cmd = messageArray[0];
   let args = messageArray.slice(1);
@@ -201,4 +200,4 @@ bot.on("message", async message => {
 
 });
 
-bot.login(botconfig.token);
+bot.login(BOT_TOKEN);
