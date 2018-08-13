@@ -16,6 +16,7 @@ bot.on("ready", async () => {
 bot.on("message", async message => {
   if (message.author.bot) return;
   if (message.channel.type !== "dm") return;
+  console.log(talkedRecently);
 
   if (talkedRecently.has(message.author.id)) {
       message.channel.send("You can only enter a command every 30 seconds.");
@@ -31,6 +32,8 @@ bot.on("message", async message => {
   let messageArray = message.content.split(" ");
   let cmd = messageArray[0];
   let args = messageArray.slice(1);
+
+  console.log(memeData);
 
   if (cmd === `${prefix}submit`){
 
@@ -84,6 +87,7 @@ bot.on("message", async message => {
         push_memeData["array"][Number(args[0] - 1)]["total_votes"] += 1;
         push_memeData["array"][Number(args[0] - 1)]["voters"].push(message.author.id.toString());
 
+        console.log(push_memeData);
         fs.writeFile("./memedata.json", JSON.stringify(push_memeData), (err) => {
           if (err) console.log(err)
         });
@@ -113,6 +117,7 @@ bot.on("message", async message => {
       push_memeData["array"][Number(args[0] - 1)]["total_votes"] += -1;
       push_memeData["array"][Number(args[0] - 1)]["voters"].splice(memeData["array"][Number(args[0] - 1)]["voters"].indexOf(message.author.id.toString()), 1);
 
+      console.log(push_memeData);
       fs.writeFile("./memedata.json", JSON.stringify(push_memeData), (err) => {
         if (err) console.log(err)
       });
@@ -186,6 +191,7 @@ bot.on("message", async message => {
         "length": 0
       }
 
+      console.log(push_memeData);
       fs.writeFile("./memedata.json", JSON.stringify(push_memeData), (err) => {
         if (err) console.log(err)
       });
