@@ -2,10 +2,9 @@ const Discord = require("discord.js");
 const fs = require("fs");
 const bot = new Discord.Client({disableEveryone: true});
 const talkedRecently = new Set();
+const memeData = new Set([{array: [], length: 0}]);
 
 bot.commands = new Discord.Collection();
-
-let memeData = require('./memedata.json');
 
 bot.on("ready", async () => {
   console.log("Bot Online!");
@@ -49,8 +48,8 @@ bot.on("message", async message => {
     }];
 
     let push_memeData = {
-      "array": memeData["array"].concat(imageData),
-      "length": (memeData["array"].length + 1)
+      "array": memeData[set1[Symbol.iterator]().next().value]["array"].concat(imageData),
+      "length": (memeData[set1[Symbol.iterator]().next().value]["array"].length + 1)
     };
 
     console.log(push_memeData);
@@ -77,26 +76,25 @@ bot.on("message", async message => {
         return message.channel.send("This command supports exactly 1 argument. Try: `/vote {number}`.");
       }
 
-      if (!Number(args[0]) || Number(args[0]) > Number(memeData["length"])) {
+      if (!Number(args[0]) || Number(args[0]) > Number(memeData[set1[Symbol.iterator]().next().value]["length"])) {
         return message.channel.send("Please enter a valid meme number. For example: `/vote 1`.")
       }
 
-      let push_memeData = memeData;
+      let push_memeData = memeData[set1[Symbol.iterator]().next().value];
 
-      if (memeData["array"][Number(args[0] - 1)]["voters"].indexOf(message.author.id.toString()) === -1) {
+      if (memeData[set1[Symbol.iterator]().next().value]["array"][Number(args[0] - 1)]["voters"].indexOf(message.author.id.toString()) === -1) {
 
         push_memeData["array"][Number(args[0] - 1)]["total_votes"] += 1;
         push_memeData["array"][Number(args[0] - 1)]["voters"].push(message.author.id.toString());
 
         console.log(push_memeData);
-        fs.writeFile("./memedata.json", JSON.stringify(push_memeData), (err) => {
-          if (err) console.log(err)
-        });
+        memeData.clear();
+        memeData.add(push_memeData);
 
         return message.channel.send("Voted for Meme #" + args[0].toString());
 
       } else {
-        console.log(memeData["array"][Number(args[0] - 1)]["voters"].indexOf(message.author.id.toString()));
+        console.log(memeData[set1[Symbol.iterator]().next().value]["array"][Number(args[0] - 1)]["voters"].indexOf(message.author.id.toString()));
         return message.channel.send("You cannot vote for the same meme twice. To cancel a vote for a meme that you have already voted for, use `/cancelvote {#}`.")
       }
 
@@ -107,16 +105,16 @@ bot.on("message", async message => {
           return message.channel.send("This command supports exactly 1 argument. Try: `/cancelvote {number}`.");
         }
 
-        if (!Number(args[0]) || Number(args[0]) > Number(memeData["length"])) {
+        if (!Number(args[0]) || Number(args[0]) > Number(memeData[set1[Symbol.iterator]().next().value]["length"])) {
           return message.channel.send("Please enter a valid meme number. For example: `/cancelvote 1`.")
         }
 
-    let push_memeData = memeData;
+    let push_memeData = memeData[set1[Symbol.iterator]().next().value];
 
-    if (memeData["array"][Number(args[0] - 1)]["voters"].indexOf(message.author.id.toString()) !== -1) {
+    if (memeData[set1[Symbol.iterator]().next().value]["array"][Number(args[0] - 1)]["voters"].indexOf(message.author.id.toString()) !== -1) {
 
       push_memeData["array"][Number(args[0] - 1)]["total_votes"] += -1;
-      push_memeData["array"][Number(args[0] - 1)]["voters"].splice(memeData["array"][Number(args[0] - 1)]["voters"].indexOf(message.author.id.toString()), 1);
+      push_memeData["array"][Number(args[0] - 1)]["voters"].splice(memeData[set1[Symbol.iterator]().next().value]["array"][Number(args[0] - 1)]["voters"].indexOf(message.author.id.toString()), 1);
 
       console.log(push_memeData);
       fs.writeFile("./memedata.json", JSON.stringify(push_memeData), (err) => {
@@ -126,7 +124,7 @@ bot.on("message", async message => {
       return message.channel.send("Canceled Vote for Meme #" + args[0].toString());
 
     } else {
-      console.log(memeData["array"][Number(args[0] - 1)]["voters"].indexOf(message.author.id.toString()));
+      console.log(memeData[set1[Symbol.iterator]().next().value]["array"][Number(args[0] - 1)]["voters"].indexOf(message.author.id.toString()));
       return message.channel.send("You cannot cancel a vote for a meme you haven't voted for already, silly.")
     }
 
@@ -137,7 +135,7 @@ bot.on("message", async message => {
       return message.channel.send("This command supports exactly 1 argument. Try: `/cancelvote {number}`.");
     }
 
-    if (!Number(args[0]) || Number(args[0]) > Number(memeData["length"])) {
+    if (!Number(args[0]) || Number(args[0]) > Number(memeData[set1[Symbol.iterator]().next().value]["length"])) {
       return message.channel.send("Please enter a valid meme number. For example: `/cancelvote 1`.")
     }
 
@@ -164,8 +162,8 @@ bot.on("message", async message => {
       let winnerId = 0;
       let d = new Date();
 
-      for (i = 1; i < Number(memeData["length"]); i++) {
-        if (Number(memeData["array"][i]["total_votes"]) < Number(memeData["array"][winnerId]["total_votes"])) {
+      for (i = 1; i < Number(memeData[set1[Symbol.iterator]().next().value]["length"]); i++) {
+        if (Number(memeData[set1[Symbol.iterator]().next().value]["array"][i]["total_votes"]) < Number(memeData[set1[Symbol.iterator]().next().value]["array"][winnerId]["total_votes"])) {
           winnerId += 1;
         }
       }
@@ -175,9 +173,9 @@ bot.on("message", async message => {
           "author": {
             "name": `Week of ${d.getMonth()}/${d.getDate()}/${(d.getFullYear().toString())[2]}${(d.getFullYear().toString())[3]}`
           },
-          "description": `Creator: ${bot.users.get(memeData["array"][winnerId]["creator"]).username}`,
+          "description": `Creator: ${bot.users.get(memeData[set1[Symbol.iterator]().next().value]["array"][winnerId]["creator"]).username}`,
           "image": {
-            "url": `${memeData["array"][winnerId]["url"]}`
+            "url": `${memeData[set1[Symbol.iterator]().next().value]["array"][winnerId]["url"]}`
           }
         }
       });
