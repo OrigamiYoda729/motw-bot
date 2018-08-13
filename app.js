@@ -53,6 +53,7 @@ bot.on("message", async message => {
       "length": (memeData["array"].length + 1)
     };
 
+    console.log(push_memeData);
      fs.writeFile("./memedata.json", JSON.stringify(push_memeData), (err) => {
        if (err) console.log(err)
      });
