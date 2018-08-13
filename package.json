@@ -9,7 +9,7 @@
   "author": "Shay Kitoff",
   "license": "ISC",
   "dependencies": {
-    "discord.js": "^11.3.2",
+    "discord.js": "^11.4.1",
     "npm": "^6.3.0"
   }
 }

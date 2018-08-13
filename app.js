@@ -18,13 +18,13 @@ bot.on("message", async message => {
   console.log(talkedRecently);
 
   if (talkedRecently.has(message.author.id)) {
-      message.channel.send("You can only enter a command every 30 seconds.");
+      message.channel.send("You can only enter a command every 20 seconds.");
       return;
   } else {
       talkedRecently.add(message.author.id);
       setTimeout(() => {
         talkedRecently.delete(message.author.id);
-      }, 30000);
+      }, 20000);
   }
 
   let prefix = "/";
@@ -48,14 +48,13 @@ bot.on("message", async message => {
     }];
 
     let push_memeData = {
-      "array": memeData[set1[Symbol.iterator]().next().value]["array"].concat(imageData),
-      "length": (memeData[set1[Symbol.iterator]().next().value]["array"].length + 1)
+      "array": memeData[Symbol.iterator]().next().value["array"].concat(imageData),
+      "length": (memeData[Symbol.iterator]().next().value["array"].length + 1)
     };
 
     console.log(push_memeData);
-     fs.writeFile("./memedata.json", JSON.stringify(push_memeData), (err) => {
-       if (err) console.log(err)
-     });
+    memeData.clear();
+    memeData.add(push_memeData);
 
      bot.channels.get("442373939222544384").send({
      "embed": {
@@ -76,13 +75,13 @@ bot.on("message", async message => {
         return message.channel.send("This command supports exactly 1 argument. Try: `/vote {number}`.");
       }
 
-      if (!Number(args[0]) || Number(args[0]) > Number(memeData[set1[Symbol.iterator]().next().value]["length"])) {
+      if (!Number(args[0]) || Number(args[0]) > Number(memeData[Symbol.iterator]().next().value["length"])) {
         return message.channel.send("Please enter a valid meme number. For example: `/vote 1`.")
       }
 
-      let push_memeData = memeData[set1[Symbol.iterator]().next().value];
+      let push_memeData = memeData[Symbol.iterator]().next().value;
 
-      if (memeData[set1[Symbol.iterator]().next().value]["array"][Number(args[0] - 1)]["voters"].indexOf(message.author.id.toString()) === -1) {
+      if (memeData[Symbol.iterator]().next().value["array"][Number(args[0] - 1)]["voters"].indexOf(message.author.id.toString()) === -1) {
 
         push_memeData["array"][Number(args[0] - 1)]["total_votes"] += 1;
         push_memeData["array"][Number(args[0] - 1)]["voters"].push(message.author.id.toString());
@@ -94,7 +93,7 @@ bot.on("message", async message => {
         return message.channel.send("Voted for Meme #" + args[0].toString());
 
       } else {
-        console.log(memeData[set1[Symbol.iterator]().next().value]["array"][Number(args[0] - 1)]["voters"].indexOf(message.author.id.toString()));
+        console.log(memeData[Symbol.iterator]().next().value["array"][Number(args[0] - 1)]["voters"].indexOf(message.author.id.toString()));
         return message.channel.send("You cannot vote for the same meme twice. To cancel a vote for a meme that you have already voted for, use `/cancelvote {#}`.")
       }
 
@@ -105,26 +104,25 @@ bot.on("message", async message => {
           return message.channel.send("This command supports exactly 1 argument. Try: `/cancelvote {number}`.");
         }
 
-        if (!Number(args[0]) || Number(args[0]) > Number(memeData[set1[Symbol.iterator]().next().value]["length"])) {
+        if (!Number(args[0]) || Number(args[0]) > Number(memeData[Symbol.iterator]().next().value["length"])) {
           return message.channel.send("Please enter a valid meme number. For example: `/cancelvote 1`.")
         }
 
-    let push_memeData = memeData[set1[Symbol.iterator]().next().value];
+    let push_memeData = memeData[Symbol.iterator]().next().value;
 
-    if (memeData[set1[Symbol.iterator]().next().value]["array"][Number(args[0] - 1)]["voters"].indexOf(message.author.id.toString()) !== -1) {
+    if (memeData[Symbol.iterator]().next().value["array"][Number(args[0] - 1)]["voters"].indexOf(message.author.id.toString()) !== -1) {
 
       push_memeData["array"][Number(args[0] - 1)]["total_votes"] += -1;
-      push_memeData["array"][Number(args[0] - 1)]["voters"].splice(memeData[set1[Symbol.iterator]().next().value]["array"][Number(args[0] - 1)]["voters"].indexOf(message.author.id.toString()), 1);
+      push_memeData["array"][Number(args[0] - 1)]["voters"].splice(memeData[Symbol.iterator]().next().value["array"][Number(args[0] - 1)]["voters"].indexOf(message.author.id.toString()), 1);
 
       console.log(push_memeData);
-      fs.writeFile("./memedata.json", JSON.stringify(push_memeData), (err) => {
-        if (err) console.log(err)
-      });
+      memeData.clear();
+      memeData.add(push_memeData);
 
       return message.channel.send("Canceled Vote for Meme #" + args[0].toString());
 
     } else {
-      console.log(memeData[set1[Symbol.iterator]().next().value]["array"][Number(args[0] - 1)]["voters"].indexOf(message.author.id.toString()));
+      console.log(memeData[Symbol.iterator]().next().value["array"][Number(args[0] - 1)]["voters"].indexOf(message.author.id.toString()));
       return message.channel.send("You cannot cancel a vote for a meme you haven't voted for already, silly.")
     }
 
@@ -135,7 +133,7 @@ bot.on("message", async message => {
       return message.channel.send("This command supports exactly 1 argument. Try: `/cancelvote {number}`.");
     }
 
-    if (!Number(args[0]) || Number(args[0]) > Number(memeData[set1[Symbol.iterator]().next().value]["length"])) {
+    if (!Number(args[0]) || Number(args[0]) > Number(memeData[Symbol.iterator]().next().value["length"])) {
       return message.channel.send("Please enter a valid meme number. For example: `/cancelvote 1`.")
     }
 
@@ -162,8 +160,8 @@ bot.on("message", async message => {
       let winnerId = 0;
       let d = new Date();
 
-      for (i = 1; i < Number(memeData[set1[Symbol.iterator]().next().value]["length"]); i++) {
-        if (Number(memeData[set1[Symbol.iterator]().next().value]["array"][i]["total_votes"]) < Number(memeData[set1[Symbol.iterator]().next().value]["array"][winnerId]["total_votes"])) {
+      for (i = 1; i < Number(memeData[Symbol.iterator]().next().value["length"]); i++) {
+        if (Number(memeData[Symbol.iterator]().next().value["array"][i]["total_votes"]) < Number(memeData[Symbol.iterator]().next().value["array"][winnerId]["total_votes"])) {
           winnerId += 1;
         }
       }
@@ -173,14 +171,14 @@ bot.on("message", async message => {
           "author": {
             "name": `Week of ${d.getMonth()}/${d.getDate()}/${(d.getFullYear().toString())[2]}${(d.getFullYear().toString())[3]}`
           },
-          "description": `Creator: ${bot.users.get(memeData[set1[Symbol.iterator]().next().value]["array"][winnerId]["creator"]).username}`,
+          "description": `Creator: ${bot.users.get(memeData[Symbol.iterator]().next().value["array"][winnerId]["creator"]).username}`,
           "image": {
-            "url": `${memeData[set1[Symbol.iterator]().next().value]["array"][winnerId]["url"]}`
+            "url": `${memeData[Symbol.iterator]().next().value["array"][winnerId]["url"]}`
           }
         }
       });
 
-      bot.channels.get("442372654905950218").send("@eveyone - The #meme-of-the-week competition has been reset for this week! Visit #the-winnners to see this week's winner!");
+      bot.channels.get("442372654905950218").send("@everyone - The #meme-of-the-week competition has been reset for this week! Visit #the-winnners to see this week's winner!");
 
       let fetched = await bot.channels.get("442373939222544384").fetchMessages();
       bot.channels.get("442373939222544384").bulkDelete(fetched);
@@ -191,9 +189,8 @@ bot.on("message", async message => {
       }
 
       console.log(push_memeData);
-      fs.writeFile("./memedata.json", JSON.stringify(push_memeData), (err) => {
-        if (err) console.log(err)
-      });
+      memeData.clear();
+      memeData.add(push_memeData);
 
     }
 
@@ -205,4 +202,4 @@ bot.on("message", async message => {
 
 });
 
-bot.login(process.env.BOT_TOKEN);
+bot.login('NDc2NDU0OTgzMTkwMDUyODY0.Dkt4Ng.Ho0uaTnTY9qNXqc8d_Y_JR2SH2Q');
