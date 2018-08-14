@@ -152,54 +152,55 @@ bot.on("message", async message => {
 
     return message.channel.send("Reported bug to server admins.");
 
-  } else
-  if (cmd === `${prefix}reset`) {
-
-    if (message.author.id.toString() === "241658711431577601") {
-
-      let winnerId = 0;
-      let d = new Date();
-
-      for (i = 1; i < Number(memeData[Symbol.iterator]().next().value["length"]); i++) {
-        if (Number(memeData[Symbol.iterator]().next().value["array"][i]["total_votes"]) < Number(memeData[Symbol.iterator]().next().value["array"][winnerId]["total_votes"])) {
-          winnerId += 1;
-        }
-      }
-
-      bot.channels.get("476815843968417813").send({
-        "embed": {
-          "author": {
-            "name": `Week of ${d.getMonth()}/${d.getDate()}/${(d.getFullYear().toString())[2]}${(d.getFullYear().toString())[3]}`
-          },
-          "description": `Creator: ${bot.users.get(memeData[Symbol.iterator]().next().value["array"][winnerId]["creator"]).username}`,
-          "image": {
-            "url": `${memeData[Symbol.iterator]().next().value["array"][winnerId]["url"]}`
-          }
-        }
-      });
-
-      bot.channels.get("442372654905950218").send("@everyone - The #meme-of-the-week competition has been reset for this week! Visit #the-winnners to see this week's winner!");
-
-      let fetched = await bot.channels.get("442373939222544384").fetchMessages();
-      bot.channels.get("442373939222544384").bulkDelete(fetched);
-
-      let push_memeData = {
-        "array": [],
-        "length": 0
-      }
-
-      console.log(push_memeData);
-      memeData.clear();
-      memeData.add(push_memeData);
-
-    }
-
-    return message.channel.send("Resetted the Meme of the Week competition!")
-
   } else {
     message.channel.send("Try sending me a command. Go to the `#competition-rules` channel on the server for more info.")
   }
 
 });
+
+setInterval(function() {
+
+  let d2 = new Date();
+
+  if (Number(d2.getDay()) === 3 && Number(d2.getHours()) === 16 && Number(d2.getMinutes()) === 20) {
+
+    let winnerId = 0;
+    let d = new Date();
+
+    for (i = 1; i < Number(memeData[Symbol.iterator]().next().value["length"]); i++) {
+      if (Number(memeData[Symbol.iterator]().next().value["array"][i]["total_votes"]) < Number(memeData[Symbol.iterator]().next().value["array"][winnerId]["total_votes"])) {
+        winnerId += 1;
+      }
+    }
+
+    bot.channels.get("476815843968417813").send({
+      "embed": {
+        "author": {
+          "name": `Week of ${d.getMonth()}/${d.getDate()}/${(d.getFullYear().toString())[2]}${(d.getFullYear().toString())[3]}`
+        },
+        "description": `Creator: ${bot.users.get(memeData[Symbol.iterator]().next().value["array"][winnerId]["creator"]).username}`,
+        "image": {
+          "url": `${memeData[Symbol.iterator]().next().value["array"][winnerId]["url"]}`
+        }
+      }
+    });
+
+    bot.channels.get("442372654905950218").send("@everyone - The #meme-of-the-week competition has been reset for this week! Visit #the-winnners to see this week's winner!");
+
+    let fetched = await bot.channels.get("442373939222544384").fetchMessages();
+    bot.channels.get("442373939222544384").bulkDelete(fetched);
+
+    let push_memeData = {
+      "array": [],
+      "length": 0
+    }
+
+    console.log(push_memeData);
+    memeData.clear();
+    memeData.add(push_memeData);
+
+  }
+
+}, 60000)
 
 bot.login('NDc2NDU0OTgzMTkwMDUyODY0.Dkt4Ng.Ho0uaTnTY9qNXqc8d_Y_JR2SH2Q');
